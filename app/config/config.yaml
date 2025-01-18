@@ -1,0 +1,8 @@
+server:
+  http:
+    port: 9001
+    timeout: 1s
+user:
+  mnt: /mnt
+  secret_key: 8Sz0nqYNig4t76ZcVEDiVnwhmSm49W6M
+  password: 1234
