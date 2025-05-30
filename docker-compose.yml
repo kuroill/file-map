@@ -1,0 +1,47 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: pg
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: HUP5#ZpW4taj3YdF
+      POSTGRES_DB: filemap
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgresql/data:/var/lib/postgresql/data
+    networks:
+      - net
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 3s
+      timeout: 3s
+      retries: 3
+
+  filemap:
+    image: file-map
+    container_name: filemap
+    restart: always
+    environment:
+      GIN_MODE: release
+      RESOURCE_DIR: resource
+      DATABASE_URL: host=pg user=postgres password=HUP5#ZpW4taj3YdF dbname=filemap port=5432 sslmode=disable
+      SECRET_JWT: 8Sz0nqYNig4t76ZcVEDiVnwhmSm49W6M
+      PASSWORD: 1234
+    ports:
+      - "443:443"
+    volumes:
+      - ./resource:/app/resource
+      - ./app/cert:/app/cert
+      - ./app/dist:/app/dist
+      - ./log:/log
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - net
+
+networks:
+  net:
+    driver: bridge

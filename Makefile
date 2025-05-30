@@ -1,11 +1,15 @@
-ROOT_DIR=/Users/k
-# ROOT_DIR=C:\
+CERT_DIR=./app/cert
+CERT_PATH=$(CERT_DIR)/cert.pem
+KEY_PATH=$(CERT_DIR)/key.pem
 
-run:
-	cd cmd && go run main.go -root $(ROOT_DIR)
+cert:
+	@if command -v ipconfig > /dev/null; then \
+		IP=$$(ipconfig getifaddr en1 2>/dev/null || ipconfig getifaddr en0 2>/dev/null); \
+	elif command -v hostname > /dev/null; then \
+		IP=$$(hostname -I | awk '{print $$1}'); \
+	else \
+		IP=$$(ifconfig | grep "inet " | grep -v "127.0.0.1" | awk '{print $$2}' | head -n 1); \
+	fi; \
+	mkdir -p $(CERT_DIR); \
+	mkcert -cert-file $(CERT_PATH) -key-file $(KEY_PATH) $$IP localhost 127.0.0.1 ::1;
 
-build:
-	go mod vendor
-	docker build --platform linux/amd64 -t anosaa/file-map-amd64:0.0.2 .
-	# docker build --platform linux/arm64 -t anosaa/file-map-arm64:0.0.2 .
-	rm -rf vendor
