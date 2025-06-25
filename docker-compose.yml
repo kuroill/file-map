@@ -11,6 +11,8 @@ services:
       - "5432:5432"
     volumes:
       - ./postgresql/data:/var/lib/postgresql/data
+      # win
+      # - .\postgresql\data:/var/lib/postgresql/data
     networks:
       - net
     healthcheck:
@@ -36,6 +38,11 @@ services:
       - ./app/cert:/app/cert
       - ./app/dist:/app/dist
       - ./log:/log
+      # win
+      # - .\resource:/app/resource
+      # - .\app\cert:/app/cert
+      # - .\app\dist:/app/dist
+      # - .\log:/log
     depends_on:
       postgres:
         condition: service_healthy
